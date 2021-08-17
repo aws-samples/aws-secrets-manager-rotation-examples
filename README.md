@@ -46,7 +46,7 @@ _Where **other services** are those beyond the stereotypical, such as databases,
   }
   ```
 
-+ **Source code:** [SecretsManagerCloudFrontAlb/](SecretsManagerCloudFrontAlb/)
++ **Source code:** [SecretsManagerAlb/](SecretsManagerAlb/)
 
 
 
