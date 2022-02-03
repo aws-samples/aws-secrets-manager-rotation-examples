@@ -17,7 +17,7 @@ _Where **other services** are those beyond the stereotypical, such as databases,
 
 ### Amazon CloudFront API Key header injection<a name="sar-template-cloudfront-apikey-header-injection"></a>
 + **Name:** SecretsManagerCloudFront
-+ **Supported service:** CloudFront\. This Lambda function will add a header to to requests from CloudFront to the backend origin service\.
++ **Supported service:** CloudFront\. This Lambda function will add a header to requests from CloudFront to the backend origin service\.
 + **Rotation strategy:** A secret contains a json string of 3 active key values\. The Lambda Function will pop the oldest key, push a new key, then update a CloudFront distribution to match\.
 + **Expected `SecretString` structure:** 
 
