@@ -1,13 +1,16 @@
-
+from constructs import Construct
 
 from aws_cdk import (
+  Aws,
+  Duration,
+  Stack,
+  RemovalPolicy,
   aws_iam                    as iam,
   aws_secretsmanager         as secretsmanager,
   aws_kms                    as kms,
   aws_lambda                 as lfn,
   aws_ec2                    as ec2,
   aws_elasticloadbalancingv2 as elbv2,
-  core,
 )
 
 import string
@@ -15,7 +18,7 @@ import random
 import json
 
 
-class ALBSecretsStack(core.Stack):
+class ALBSecretsStack(Stack):
 
   ##
   ## Random secret generator
@@ -27,7 +30,7 @@ class ALBSecretsStack(core.Stack):
     key   = ''.join(random.choice(chars) for _ in range(size))
     return key
 
-  def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+  def __init__(self, scope: Construct, id: str, **kwargs) -> None:
     super().__init__(scope, id, **kwargs)
 
 
@@ -63,7 +66,7 @@ class ALBSecretsStack(core.Stack):
         )
       ] ## subnet_configuration
     ) ## vpc
-    vpc.apply_removal_policy(core.RemovalPolicy.DESTROY)
+    vpc.apply_removal_policy(RemovalPolicy.DESTROY)
 
 
     ##
@@ -129,7 +132,7 @@ class ALBSecretsStack(core.Stack):
     ##
     ## IAM Role used for Lambda function
     ##
-    secret_lambda_role_arn = "arn:aws:iam::" + core.Aws.ACCOUNT_ID + ":role/alb-apikeys-rotator"
+    secret_lambda_role_arn = "arn:aws:iam::" + Aws.ACCOUNT_ID + ":role/alb-apikeys-rotator"
     secret_lambda_role     = iam.Role.from_role_arn(self, 
       id      ="ApiKeysRotatorIamRole", 
       role_arn=secret_lambda_role_arn,
@@ -141,10 +144,10 @@ class ALBSecretsStack(core.Stack):
     ## Lambda function to rotate the secret
     ##
     secret_lambda_function = lfn.Function(self, "ApiKeysRotator",
-        code           = lfn.Code.asset("alb_apikeys_rotator"),
+        code           = lfn.Code.from_asset("alb_apikeys_rotator"),
         function_name  = "alb_apikeys_rotator",
         handler        = "alb_apikeys_rotator.lambda_handler",
-        timeout        = core.Duration.seconds(300),
+        timeout        = Duration.seconds(300),
         runtime        = lfn.Runtime.PYTHON_3_8,
         role           = secret_lambda_role,
         #environment    = {"ALBNAME":"sample"}
